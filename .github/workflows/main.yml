@@ -6,28 +6,28 @@ on:
       - main     # Run pipeline when you push to main branch
 
 jobs:
-  # build-and-push:
-  #   runs-on: ubuntu-latest
+  build-and-push:
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  #     - name: Log in to Docker Hub
-  #       uses: docker/login-action@v2
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  #     - name: Build and push Docker image
-  #       uses: docker/build-push-action@v4
-  #       with:
-  #         context: .
-  #         push: true
-  #         no-cache: true
-  #         tags: |
-  #           ${{ secrets.DOCKERHUB_USERNAME }}/jeel:latest
-  #           ${{ secrets.DOCKERHUB_USERNAME }}/jeel:${{ github.sha }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          no-cache: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/jeel:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/jeel:${{ github.sha }}
 
   deploy-cloudrun:
     #needs: build-and-push
