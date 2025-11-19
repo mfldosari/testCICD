@@ -3,7 +3,7 @@ name: CI/CD for LibreChat
 on:
   push:
     branches:
-      - main   
+      - main   # Run pipeline when you push to main branch
 
 jobs:
   build-and-push:
@@ -29,3 +29,29 @@ jobs:
           push: true
           no-cache: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/jeel:v1
+
+  deploy-cloudrun:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+  
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+  
+      # Step 2: Set up gcloud
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+  
+      # Step 3: Deploy to Cloud Run
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ secrets.GCP_SERVICE }} \
+            --image=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/jeel:v1 \
+            --platform=managed \
+            --region=${{ secrets.GCP_REGION }} \
+            --allow-unauthenticated
