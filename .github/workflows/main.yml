@@ -30,7 +30,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/jeel:${{ github.sha }}
 
   deploy-cloudrun:
-    #needs: build-and-push
+    needs: build-and-push
     runs-on: ubuntu-latest
     
     steps:
