@@ -28,4 +28,4 @@ jobs:
           context: .
           push: true
           no-cache: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/jeel:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/jeel:v1
