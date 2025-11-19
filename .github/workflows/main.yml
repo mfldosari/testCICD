@@ -28,30 +28,32 @@ jobs:
           context: .
           push: true
           no-cache: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/jeel:v1
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/jeel:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/jeel:${{ github.sha }}
 
   deploy-cloudrun:
     needs: build-and-push
     runs-on: ubuntu-latest
-  
+
     steps:
       # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
-  
-      # Step 2: Set up gcloud
+
+      # Step 2: Set up gcloud with service account
       - name: Set up gcloud
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
-  
+
       # Step 3: Deploy to Cloud Run
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy ${{ secrets.GCP_SERVICE }} \
-            --image=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/jeel:v1 \
+            --image=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/jeel:${{ github.sha }} \
             --platform=managed \
             --region=${{ secrets.GCP_REGION }} \
             --allow-unauthenticated
