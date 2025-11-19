@@ -29,29 +29,29 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/jeel:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/jeel:${{ github.sha }}
 
-  # deploy-cloudrun:
-  #   needs: build-and-push
-  #   runs-on: ubuntu-latest
+  deploy-cloudrun:
+    needs: build-and-push
+    runs-on: ubuntu-latest
     
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
     
-  #     - name: Authenticate to Google Cloud
-  #       uses: google-github-actions/auth@v2
-  #       with:
-  #         credentials_json: ${{ secrets.CREDENTIALS_JSON }}   
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.CREDENTIALS_JSON }}   
     
-  #     - name: Set up gcloud
-  #       uses: google-github-actions/setup-gcloud@v1
-  #       with:
-  #         project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
     
-  #     - name: Deploy to Cloud Run
-  #       run: |
-  #         gcloud run deploy ${{ secrets.GCP_SERVICE }} \
-  #           --image=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/jeel:latest \
-  #           --platform=managed \
-  #           --region=${{ secrets.GCP_REGION }} \
-  #           --allow-unauthenticated \
-  #           --service-account=cloud-run-runtime-sa@jeel-478708.iam.gserviceaccount.com
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ secrets.GCP_SERVICE }} \
+            --image=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/jeel:latest \
+            --platform=managed \
+            --region=${{ secrets.GCP_REGION }} \
+            --allow-unauthenticated \
+            --service-account=cloud-run-runtime-sa@jeel-478708.iam.gserviceaccount.com
