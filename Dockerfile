@@ -1,16 +1,13 @@
-# Use the official lightweight Nginx image as the base
-FROM nginx:alpine
+# Use the ultra-lightweight busybox image to create a container with minimal size
+FROM busybox:latest
 
-# Copy your custom HTML file into the default Nginx public directory
-# The build context '.' is the root of your repository (where the Dockerfile is)
-COPY index.html /usr/share/nginx/html/index.html
+# Set a working directory (optional but good practice)
+WORKDIR /app
 
-# Copy the rest of the application files
-# You might want to copy everything else, if you have CSS/JS
-# COPY . /usr/share/nginx/html
+# Create a simple, self-contained index.html file directly in the container
+# This guarantees the file exists and has content.
+RUN echo '<!DOCTYPE html><html><head><title>Cloud Run Test</title><style>body{display:flex;justify-content:center;align-items:center;height:100vh;margin:0;font-family:sans-serif;background-color:#0f172a;color:#cbd5e1;text-align:center;}.box{padding:2rem;border:2px solid #334155;border-radius:0.5rem;box-shadow:0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);}</style></head><body><div class="box"><h1>Deployment Test Successful!</h1><p>The container is running correctly on Cloud Run.</p></div></body></html>' > index.html
 
-# Expose port 80 (Nginx default)
-EXPOSE 80
-
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# The Cloud Run service will just serve this single file using an included HTTP server (httpd)
+EXPOSE 8080
+CMD ["/bin/httpd", "-f", "-p", "8080", "-h", "/app"]
